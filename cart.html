@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .cart-item {
+            margin: 10px 0;
+        }
+        #fardeen {
+            background-color: #dff0d8;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        #checkoutButton {
+            margin-top: 20px;
+        }
+        #orderSummary {
+            margin-top: 30px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="fardeen">
+        <p id="waqas"></p>
+    </div>
+
+    <h2>Products</h2>
+    <div>
+        <button class="button" onclick="addToCart('Product 1', 29.99)">Add Product 1 - $29.99</button>
+        <button class="button" onclick="addToCart('Product 2', 19.99)">Add Product 2 - $19.99</button>
+        <button class="button" onclick="addToCart('Product 3', 39.99)">Add Product 3 - $39.99</button>
+    </div>
+
+    <h2>Your Cart</h2>
+    <div id="cartItems"></div>
+    <button id="checkoutButton" style="display:none;" onclick="checkout()">Checkout</button>
+
+    <h2>Order Summary</h2>
+    <div id="orderSummary"></div>
+
+    <script>
+        let cart = []; // Array to hold cart items
+
+        // Function to add a product to the cart
+        function addToCart(product, price) {
+            // Create a product object with name and price
+            const productItem = { name: product, price: price };
+            
+            // Add the product to the cart array
+            cart.push(productItem);
+
+            // Display a message that the item has been added to the cart
+            const messageBox = document.getElementById('fardeen');
+            const messageText = document.getElementById('waqas');
+            messageText.textContent = product + ' has been added to your cart!';
+            messageBox.style.display = 'block';
+
+            // Hide the message after 3 seconds
+            setTimeout(function() {
+                messageBox.style.display = 'none';
+            }, 3000);
+
+            // Update the cart display and order summary
+            updateCart();
+            updateOrderSummary();
+        }
+
+        // Function to update the cart display
+        function updateCart() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            cartItemsContainer.innerHTML = ''; // Clear previous cart items
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+                document.getElementById('checkoutButton').style.display = 'none'; // Hide checkout button if the cart is empty
+            } else {
+                cart.forEach((item, index) => {
+                    const cartItem = document.createElement('div');
+                    cartItem.classList.add('cart-item');
+                    cartItem.innerHTML = `
+                        <p>${item.name} - $${item.price.toFixed(2)}</p>
+                        <button class="button" onclick="removeFromCart(${index})">Remove</button>
+                    `;
+                    cartItemsContainer.appendChild(cartItem);
+                });
+
+                document.getElementById('checkoutButton').style.display = 'block'; // Show checkout button
+            }
+        }
+
+        // Function to update the order summary
+        function updateOrderSummary() {
+            const orderSummaryContainer = document.getElementById('orderSummary');
+            orderSummaryContainer.innerHTML = ''; // Clear previous order summary
+
+            let totalPrice = 0;
+
+            if (cart.length === 0) {
+                orderSummaryContainer.innerHTML = '<p>Your order summary is empty.</p>';
+            } else {
+                cart.forEach(item => {
+                    const summaryItem = document.createElement('div');
+                    summaryItem.innerHTML = `${item.name} - $${item.price.toFixed(2)}`;
+                    orderSummaryContainer.appendChild(summaryItem);
+                    totalPrice += item.price; // Accumulate total price
+                });
+
+                const totalElement = document.createElement('div');
+                totalElement.innerHTML = `<strong>Total: $${totalPrice.toFixed(2)}</strong>`;
+                orderSummaryContainer.appendChild(totalElement);
+            }
+        }
+
+        // Function to remove an item from the cart
+        function removeFromCart(index) {
+            cart.splice(index, 1); // Remove the item at the given index
+            updateCart(); // Update the cart display
+            updateOrderSummary(); // Update the order summary after removal
+        }
+
+        // Function to handle checkout
+        function checkout() {
+            alert('Proceeding to checkout with items: ' + cart.map(item => item.name).join(', '));
+            // Redirect to checkout page or handle checkout logic
+        }
+    </script>
+
+</body>
+</html>
